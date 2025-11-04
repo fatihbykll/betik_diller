@@ -18,7 +18,7 @@ def required_column(requireds: set[str]):
         def wrapper(rows, *args,**kwargs):
             if not rows:
                 raise ValueError("Boş veri seti")
-            keys= set(rows[0].keys)
+            keys= set(rows[0].keys())
             missing=requireds-keys
             if missing:
                 raise ValueError("Eksik kolon")

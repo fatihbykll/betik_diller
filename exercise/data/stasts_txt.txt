@@ -1,0 +1,9 @@
+Rapor
+
+Geçerli kayıt sayısı: 5
+ortalama yaş: 32.0
+Şehir dağılımı:
+Trabzon: 2
+Rize: 1
+İstanbul: 1
+Ankara: 1
