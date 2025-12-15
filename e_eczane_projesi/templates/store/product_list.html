@@ -1,0 +1,88 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+
+{% if category %}
+    <div class="alert alert-success border-start border-5 border-success">
+        <h4 class="alert-heading m-0"><i class="fa-solid fa-list me-2"></i>Kategori: {{ category.name }}</h4>
+    </div>
+{% elif search_query %}
+    <div class="alert alert-info border-start border-5 border-info">
+        <h4 class="alert-heading m-0"><i class="fa-solid fa-magnifying-glass me-2"></i>Arama Sonucu: "{{ search_query }}"</h4>
+    </div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="list-group shadow-sm">
+            <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action {% if not category %}active bg-success border-success{% endif %}">
+                Tüm Ürünler
+            </a>
+            {% for c in categories %}
+            <a href="{% url 'product_list_by_category' c.slug %}" class="list-group-item list-group-item-action {% if category and category.slug == c.slug %}active bg-success border-success{% endif %}">
+                {{ c.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="position-relative">
+                        
+                        <a href="{% url 'product_detail' product.category.slug product.slug %}">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top p-3" style="height: 200px; object-fit: contain;">
+                            {% else %}
+                                <img src="https://via.placeholder.com/200x200?text=Resim+Yok" class="card-img-top p-3">
+                            {% endif %}
+                        </a>
+
+                        {% if product.stock == 0 %}
+                            <span class="position-absolute top-0 end-0 badge bg-danger m-2">Tükendi</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-truncate" title="{{ product.name }}">
+                            <a href="{% url 'product_detail' product.category.slug product.slug %}" class="text-decoration-none text-dark">
+                                {{ product.name }}
+                            </a>
+                        </h5>
+
+                        <p class="text-muted small">{{ product.description|truncatechars:40 }}</p>
+                        
+                        <div class="mt-auto">
+                            <h5 class="text-dark fw-bold mb-3">{{ product.price }} ₺</h5>
+                            
+                            {% if user.is_authenticated %}
+                                {% if product.stock > 0 %}
+                                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-outline-success w-100">
+                                        <i class="fa-solid fa-cart-plus me-2"></i>Sepete Ekle
+                                    </a>
+                                {% else %}
+                                    <button class="btn btn-secondary w-100" disabled>Stok Yok</button>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-outline-secondary w-100">Giriş Yap</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-warning text-center py-5">
+                    <i class="fa-solid fa-face-frown fa-3x mb-3"></i>
+                    <h4>Aradığınız kriterlere uygun ürün bulunamadı.</h4>
+                    <a href="{% url 'product_list' %}" class="btn btn-success mt-3">Tüm Ürünleri Göster</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

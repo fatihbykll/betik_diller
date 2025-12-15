@@ -1,0 +1,60 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0 rounded-3">
+            
+            <div class="card-header bg-success text-white text-center py-3">
+                <h3 class="fw-bold mb-0">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i>Giriş Yap
+                </h3>
+            </div>
+
+            <div class="card-body p-4">
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger border-start border-5 border-danger fade show" role="alert">
+                            <i class="fa-solid fa-circle-exclamation me-2"></i>
+                            <strong>Hata!</strong> Kullanıcı adı veya şifre hatalı.
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">
+                            <i class="fa-solid fa-user me-1"></i>Kullanıcı Adı
+                        </label>
+                        <input type="text" name="username" class="form-control form-control-lg" placeholder="Kullanıcı adınız" required autofocus>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-secondary">
+                            <i class="fa-solid fa-key me-1"></i>Şifre
+                        </label>
+                        <input type="password" name="password" class="form-control form-control-lg" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                            Giriş Yap <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="card-footer text-center bg-light py-3">
+                <small class="text-muted">Hesabınız yok mu? 
+                    <a href="{% url 'register' %}" class="text-success fw-bold text-decoration-none">
+                        Hemen Kayıt Ol
+                    </a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

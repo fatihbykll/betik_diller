@@ -1,0 +1,141 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-5 mb-4 mb-md-0">
+                <div class="border rounded p-3 text-center bg-light">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="img-fluid" style="max-height: 400px; object-fit: contain;" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x400?text=Resim+Yok" class="img-fluid" alt="Resim Yok">
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <h1 class="fw-bold text-dark">{{ product.name }}</h1>
+                <p class="text-muted mb-3">Kategori: 
+                    <a href="{% url 'product_list_by_category' product.category.slug %}" class="text-decoration-none text-success">
+                        {{ product.category.name }}
+                    </a>
+                </p>
+                
+                <h2 class="text-success fw-bold mb-3">{{ product.price }} ₺</h2>
+
+                {% if product.stock > 0 %}
+                    <span class="badge bg-success mb-3 fs-6">Stokta Var ({{ product.stock }} adet)</span>
+                {% else %}
+                    <span class="badge bg-danger mb-3 fs-6">Tükendi</span>
+                {% endif %}
+
+                <p class="lead text-secondary">{{ product.description }}</p>
+
+                <hr>
+
+                <div class="d-grid gap-2 col-md-6">
+                    {% if product.stock > 0 %}
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-lg">
+                            <i class="fa-solid fa-cart-plus me-2"></i>Sepete Ekle
+                        </a>
+                    {% else %}
+                        <button class="btn btn-secondary btn-lg" disabled>Stok Tükendi</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-9">
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Değerlendirmeniz</h4>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                
+                    {% if user_bought %}
+                        {% if user_review %}
+                            <div class="alert alert-info">
+                                <i class="fa-solid fa-circle-info me-2"></i>
+                                Bu ürünü daha önce değerlendirdiniz.
+                            </div>
+                        {% endif %}
+
+                        <form action="{% url 'submit_review' product.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Puanınız</label><br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rating" value="5" required checked>
+                                    <label class="form-check-label text-warning">⭐⭐⭐⭐⭐</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rating" value="4" required>
+                                    <label class="form-check-label text-warning">⭐⭐⭐⭐</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rating" value="3" required>
+                                    <label class="form-check-label text-warning">⭐⭐⭐</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rating" value="2" required>
+                                    <label class="form-check-label text-warning">⭐⭐</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rating" value="1" required>
+                                    <label class="form-check-label text-warning">⭐</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Başlık</label>
+                                <input type="text" class="form-control" name="subject" value="{{ user_review.subject|default:'' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Yorumunuz</label>
+                                <textarea name="review" class="form-control" rows="3">{{ user_review.review|default:'' }}</textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Gönder</button>
+                        </form>
+
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fa-solid fa-lock me-2"></i>
+                            Bu ürünü değerlendirmek için önce <strong>satın almalısınız</strong>.
+                        </div>
+                    {% endif %}
+
+                {% else %}
+                    <div class="alert alert-info">
+                        Yorum yapabilmek için lütfen <a href="{% url 'login' %}">giriş yapın</a>.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <h4 class="mb-3">Müşteri Yorumları ({{ reviews.count }})</h4>
+        
+        {% for review in reviews %}
+            <div class="card mb-3 border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">{{ review.subject }}</h5>
+                    <div class="mb-2 text-warning">
+                        {{ review.rating }} / 5 <i class="fa fa-star"></i>
+                        <span class="text-dark ms-2 small text-muted">- {{ review.user.username }}</span>
+                    </div>
+                    <p class="card-text">{{ review.review }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-light text-center">Henüz yorum yapılmamış.</div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

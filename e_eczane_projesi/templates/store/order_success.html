@@ -1,0 +1,15 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <div class="mb-4">
+        <i class="fa-solid fa-circle-check text-success fa-5x"></i>
+    </div>
+    <h2 class="fw-bold text-success">Siparişiniz Alındı!</h2>
+    <p class="lead text-muted">Ödemeniz başarıyla gerçekleşti ve stoklar güncellendi.</p>
+    
+    <div class="mt-4">
+        <a href="{% url 'product_list' %}" class="btn btn-custom px-5 py-2">Alışverişe Devam Et</a>
+    </div>
+</div>
+{% endblock %}

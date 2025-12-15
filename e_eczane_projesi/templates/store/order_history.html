@@ -1,0 +1,49 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h3 class="mb-4 text-success"><i class="fa-solid fa-clock-rotate-left me-2"></i>Sipariş Geçmişim</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        {% for order in orders %}
+        <div class="card shadow-sm mb-4 border-start border-5 border-success">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Sipariş No:</strong> #{{ order.id }} <br>
+                    <small class="text-muted">{{ order.created_at|date:"d M Y H:i" }}</small>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-success fs-6">{{ order.total_price }} ₺</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless">
+                    <thead>
+                        <tr class="text-muted border-bottom">
+                            <th>Ürün</th>
+                            <th>Birim Fiyat</th>
+                            <th>Adet</th>
+                            <th>Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.price }} ₺</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{% widthratio item.price 1 item.quantity %} ₺</td> 
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% empty %}
+            <div class="alert alert-warning text-center">
+                Henüz hiç siparişiniz yok.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
